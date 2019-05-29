@@ -51,12 +51,16 @@ app.use(express.static('public'));
 // PROMISES
 // **********************************
 function getUsers(){
+	// Create and return a new Promise
 	return new Promise((resolve, reject) => {
+		// make request for data
 		fs.readFile('data.json', 'utf-8', (err, data) => {
 			if(err) {
+				// if error, reject promise with err
 				reject(err);
 			} else {
 				const users = JSON.parse(data);
+				// if no error, resolve promise with 'users' data
 				resolve(users);
 			}
 		})
