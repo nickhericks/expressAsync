@@ -9,12 +9,6 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static('public'));
 
 
-
-
-
-
-
-
 //CALL BACKS
 function getUsers(cb){
 	// make request
@@ -34,7 +28,21 @@ function getUsers(cb){
 	});
 }
 
-
+// when user goes to 'localhost:3000'
+app.get('/', (req,res) => {
+	// call getUsers and pass it the callback function
+  getUsers( (err, users) => {
+		// when getUsers is returned,
+		// if an error is returned, render 'error' pug template
+		if(err){
+			res.render('error', {error:err});
+		} else {
+			// otherwise render 'index' pug template
+			// and pass it 'title' and 'users'
+			res.render('index', {title: 'Users', users: users.users})
+		}
+	} );
+}); 
 
 
 
