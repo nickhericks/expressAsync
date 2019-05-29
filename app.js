@@ -11,9 +11,13 @@ app.use(express.static('public'));
 
 // Middleware to wrap all routes in try/catch block
 function asyncHandler(cb) {
-	
-
-
+	return async (req,res,next) => {
+		try {
+			await cb(req,res,next);
+		} catch(err) {
+			res.render('error', {error: err} );
+		}
+	}
 }
 
 
@@ -112,20 +116,25 @@ function getUsers(){
 }
 
 // Add 'async'
-app.get('/', async (req,res) => {
-	try {
-	// use 'await' keyword before getUsers and assign the result to a variable
-	// await is saying, run this line of code
-	// and don't run the next line until it finishes
-	const users = await getUsers();
-	// Benefit of using async/await is that we can write
-	// as many async actions that we want.
-	// const doSomethingElse = await doSomethingElse();
-	res.render('index', { title: 'Users', users: users.users });
-	} catch(err) {
-		res.render('error', {error: err});
-	}
-}); 
+app.get('/', asyncHandler(async (req, res) => {
+  // we got rid of the try/catch block down here
+  // because we added it as middleware up at top of file
+	// so that we can use it for all our routes
+	// Added that middleware in our route request 'asyncHandler()'
+	// using our code here as a callback for it
+
+  // use 'await' keyword before getUsers and assign the result to a variable
+  // await is saying, run this line of code
+  // and don't run the next line until it finishes
+  const users = await getUsers();
+  // Benefit of using async/await is that we can write
+  // as many async actions that we want.
+  // const doSomethingElse = await doSomethingElse();
+  res.render("index", { title: "Users", users: users.users });
+})); 
+
+
+
 
 
 app.listen(3000, () => console.log('App listening on port 3000!'));
