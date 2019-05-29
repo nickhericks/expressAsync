@@ -5,7 +5,7 @@ const path = require('path');
 const app = express();
 
 app.set('view engine', 'pug');
-app.set("views", path.join(__dirname, "views"));
+app.set('views', path.join(__dirname, 'views'));
 app.use(express.static('public'));
 
 // **********************************
@@ -51,11 +51,11 @@ app.use(express.static('public'));
 // PROMISES
 // **********************************
 function getUsers(cb){
-  fs.readFile('data.json', 'utf8', (err, data) => {
-    if (err) return cb(err);
-    const users = JSON.parse(data);
-    return cb(null, users);
-  });
+	fs.readFile('data.json', 'utf8', (err, data) => {
+		if (err) return cb(err);
+		const users = JSON.parse(data);
+		return cb(null, users);
+	});
 }
 
 app.get('/', (req,res) => {
