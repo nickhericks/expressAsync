@@ -9,6 +9,16 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static('public'));
 
 
+// Middleware to wrap all routes in try/catch block
+function asyncHandler(cb) {
+	
+
+
+}
+
+
+
+
 // // **********************************
 // // CALL BACKS
 // // **********************************
