@@ -8,9 +8,10 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static('public'));
 
-// **********************************
-// CALL BACKS
-// **********************************
+
+// // **********************************
+// // CALL BACKS
+// // **********************************
 // function getUsers(cb){
 // 	// make request
 // 	fs.readFile('data.json', 'utf8', (err, data) => {
@@ -47,56 +48,74 @@ app.use(express.static('public'));
 
 
 
-// **********************************
-// PROMISES
-// **********************************
-function getUsers(){
-	// Create and return a new Promise
-	return new Promise((resolve, reject) => {
-		// make request for data
-		fs.readFile('data.json', 'utf-8', (err, data) => {
-			if(err) {
-				// if error, reject promise with err
-				reject(err);
-			} else {
-				const users = JSON.parse(data);
-				// if no error, resolve promise with 'users' data
-				resolve(users);
-			}
-		})
-	});
-}
+// // **********************************
+// // PROMISES
+// // **********************************
+// function getUsers(){
+// 	// Create and return a new Promise
+// 	return new Promise((resolve, reject) => {
+// 		// make request for data
+// 		fs.readFile('data.json', 'utf-8', (err, data) => {
+// 			if(err) {
+// 				// if error, reject promise with err
+// 				reject(err);
+// 			} else {
+// 				const users = JSON.parse(data);
+// 				// if no error, resolve promise with 'users' data
+// 				resolve(users);
+// 			}
+// 		});
+// 	});
+// }
 
-app.get('/', (req,res) => {
-	// call getUsers(), then do something with the returned promise
-	getUsers()
-		.then((users) => {
-			// throw new Error('Noooooooo');
-			res.render('index', {title: 'Users', users: users.users});
-		})
-		// or if an error, display error pug template
-		.catch((err) => {
-			res.render('error', {error: err});
-		})
-}); 
-
+// app.get('/', (req,res) => {
+// 	// call getUsers(), then do something with the returned promise
+// 	getUsers()
+// 		.then((users) => {
+// 			// throw new Error('Noooooooo');
+// 			res.render('index', {title: 'Users', users: users.users});
+// 		})
+// 		// or if an error, display error pug template
+// 		.catch((err) => {
+// 			res.render('error', {error: err});
+// 		});
+// }); 
 
 
 
 // **********************************
 // ASYNC/AWAIT
 // **********************************
-// function getUsers(cb){
-//   fs.readFile('data.json', 'utf8', (err, data) => {
-//     if (err) return cb(err);
-//     const users = JSON.parse(data);
-//     return cb(null, users);
-//   });
-// }
+function getUsers(){
+	// This function doesn't need to be changed at all
+	// because we are already returning a Promise.
+	return new Promise((resolve, reject) => {
+		fs.readFile('data.json', 'utf-8', (err, data) => {
+			if(err) {
+				reject(err);
+			} else {
+				const users = JSON.parse(data);
+				resolve(users);
+			}
+		});
+	});
+}
 
-// app.get('/', (req,res) => {
-  
-// }); 
+// Add 'async'
+app.get('/', async (req,res) => {
+	try {
+	// use 'await' keyword before getUsers and assign the result to a variable
+	// await is saying, run this line of code
+	// and don't run the next line until it finishes
+	const users = await getUsers();
+	// Benefit of using async/await is that we can write
+	// as many async actions that we want.
+	// const doSomethingElse = await doSomethingElse();
+	res.render('index', { title: 'Users', users: users.users });
+	} catch(err) {
+		res.render('error', {error: err});
+	}
+}); 
 
 
 app.listen(3000, () => console.log('App listening on port 3000!'));
