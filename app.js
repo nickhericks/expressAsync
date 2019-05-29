@@ -50,16 +50,30 @@ app.use(express.static('public'));
 // **********************************
 // PROMISES
 // **********************************
-function getUsers(cb){
-	fs.readFile('data.json', 'utf8', (err, data) => {
-		if (err) return cb(err);
-		const users = JSON.parse(data);
-		return cb(null, users);
+function getUsers(){
+	return new Promise((resolve, reject) => {
+		fs.readFile('data.json', 'utf-8', (err, data) => {
+			if(err) {
+				reject(err);
+			} else {
+				const users = JSON.parse(data);
+				resolve(users);
+			}
+		})
 	});
 }
 
 app.get('/', (req,res) => {
-  
+	// call getUsers(), then do something with the returned promise
+	getUsers()
+		.then((users) => {
+			// throw new Error('Noooooooo');
+			res.render('index', {title: 'Users', users: users.users});
+		})
+		// or if an error, display error pug template
+		.catch((err) => {
+			res.render('error', {error: err});
+		})
 }); 
 
 
